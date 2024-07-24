@@ -62,10 +62,10 @@ pub struct DecodedResponseV2 {
     pub notification_uuid: String,
     pub subtype: Option<String>,
     pub notification_type: String,
-    pub data: Option<DecodedData>,
+    pub data: Option<SignedData>,
     pub version: String,
     pub signed_date: i64,
-    pub summary: Option<DecodedSummary>,
+    pub summary: Option<SignedSummary>,
 }
 
 #[derive(Serialize, Deserialize, Debug)]
