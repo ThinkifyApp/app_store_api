@@ -121,8 +121,26 @@ pub struct DecodedData {
     pub consumption_request_reason: Option<String>,
     pub environment: String,
     pub signed_renewal_info: Option<String>,
-    pub signed_transaction_info: Option<SignedTransaction>,
+    pub signed_transaction_info: Option<String>,
     pub status: Option<i32>,
+}
+
+impl DecodedData {
+    pub fn decode_transaction_info(
+        &self,
+    ) -> Result<DecodedTransaction, Box<dyn std::error::Error>> {
+        let trans_info = self.signed_transaction_info.as_ref().unwrap();
+        let key = decode_payload_cert(trans_info).unwrap();
+        let mut val = Validation::new(Algorithm::ES256);
+        val.required_spec_claims = HashSet::new();
+
+        Ok(jsonwebtoken::decode::<DecodedTransaction>(
+            trans_info,
+            &DecodingKey::from_ec_der(&key),
+            &val,
+        )
+        .map(|i| i.claims)?)
+    }
 }
 
 #[derive(Serialize, Deserialize, Debug)]
