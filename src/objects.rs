@@ -62,33 +62,33 @@ pub struct DecodedResponseV2 {
     pub notification_uuid: String,
     pub subtype: Option<String>,
     pub notification_type: String,
-    pub data: Option<SignedData>,
+    pub data: Option<DecodedData>,
     pub version: String,
     pub signed_date: i64,
-    pub summary: Option<SignedSummary>,
+    pub summary: Option<DecodedSummary>,
 }
 
-#[derive(Serialize, Deserialize, Debug)]
-pub struct SignedData {
-    #[serde(rename = "signedPayload")]
-    pub signed_payload: String,
-}
-
-impl SignedData {
-    pub fn decode(&self) -> DecodedData {
-        let key = decode_payload_cert(&self.signed_payload).unwrap();
-        let mut val = Validation::new(Algorithm::ES256);
-        val.required_spec_claims = HashSet::new();
-
-        jsonwebtoken::decode::<DecodedData>(
-            &self.signed_payload,
-            &DecodingKey::from_ec_der(&key),
-            &val,
-        )
-        .unwrap()
-        .claims
-    }
-}
+// #[derive(Serialize, Deserialize, Debug)]
+// pub struct SignedData {
+//     #[serde(rename = "signedPayload")]
+//     pub signed_payload: String,
+// }
+//
+// impl SignedData {
+//     pub fn decode(&self) -> DecodedData {
+//         let key = decode_payload_cert(&self.signed_payload).unwrap();
+//         let mut val = Validation::new(Algorithm::ES256);
+//         val.required_spec_claims = HashSet::new();
+//
+//         jsonwebtoken::decode::<DecodedData>(
+//             &self.signed_payload,
+//             &DecodingKey::from_ec_der(&key),
+//             &val,
+//         )
+//         .unwrap()
+//         .claims
+//     }
+// }
 
 #[derive(Serialize, Deserialize, Debug)]
 pub struct SignedSummary {
